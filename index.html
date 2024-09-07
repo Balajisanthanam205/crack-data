@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soil Moisture Monitoring</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      text-align: center;
+    }
+    #content {
+      padding: 20px;
+      margin: 50px auto;
+      width: 300px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 { color: #333; }
+    p { font-size: 20px; }
+  </style>
+  <script>
+    function fetchData() {
+      fetch('http://<ESP32_IP_ADDRESS>/data')  // Replace <ESP32_IP_ADDRESS> with your ESP32's IP address
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('moisture').innerText = data.soilMoisture;
+        });
+    }
+    setInterval(fetchData, 1000);  // Fetch data every second
+  </script>
+</head>
+<body>
+  <div id="content">
+    <h1>Soil Moisture Data</h1>
+    <p>Moisture Level: <span id="moisture">Loading...</span></p>
+  </div>
+</body>
+</html>
