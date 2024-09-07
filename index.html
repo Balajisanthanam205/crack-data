@@ -1,40 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Soil Moisture Monitoring</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f9;
-      text-align: center;
-    }
-    #content {
-      padding: 20px;
-      margin: 50px auto;
-      width: 300px;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h1 { color: #333; }
-    p { font-size: 20px; }
-  </style>
-  <script>
-    function fetchData() {
-      fetch('http://192.168.152.130/data')  // Replace <ESP32_IP_ADDRESS> with your ESP32's IP address
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById('moisture').innerText = data.soilMoisture;
-        });
-    }
-    setInterval(fetchData, 1000);  // Fetch data every second
-  </script>
+  <title>Sensor Data</title>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
 </head>
 <body>
-  <div id="content">
-    <h1>Soil Moisture Data</h1>
-    <p>Moisture Level: <span id="moisture">Loading...</span></p>
-  </div>
+  <h1>Sensor Data</h1>
+  <p>Sensor 1 Distance: <span id="sensor1"></span> cm</p>
+  <p>Sensor 2 Distance: <span id="sensor2"></span> cm</p>
+  <p>Sensor 3 Distance: <span id="sensor3"></span> cm</p>
+
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTrfNxYXXWbeJj1Tr9zBdadInTJ3bFx-o",
+      authDomain: "tranquil-c2029.firebaseapp.com",
+      databaseURL: "https://tranquil-c2029-default-rtdb.firebaseio.com",
+      projectId: "tranquil-c2029",
+      storageBucket: "tranquil-c2029.appspot.com",
+      messagingSenderId: "1028032875622",
+      appId: "1:1028032875622:web:09c445712b3619098f71a7",
+      measurementId: "G-D8FVT3WJ8H"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Reference to your Firebase database
+    const database = firebase.database();
+
+    function fetchData() {
+      database.ref('sensorData').on('value', (snapshot) => {
+        const data = snapshot.val();
+        updateValues(data);
+      });
+    }
+
+    function updateValues(data) {
+      document.getElementById('sensor1').textContent = data.sensor1_distance || 'N/A';
+      document.getElementById('sensor2').textContent = data.sensor2_distance || 'N/A';
+      document.getElementById('sensor3').textContent = data.sensor3_distance || 'N/A';
+    }
+
+    fetchData();
+  </script>
 </body>
 </html>
