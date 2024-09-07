@@ -22,7 +22,7 @@
   </style>
   <script>
     function fetchData() {
-      fetch('http://<ESP32_IP_ADDRESS>/data')  // Replace <ESP32_IP_ADDRESS> with your ESP32's IP address
+      fetch('http://192.168.152.130/data')  // Replace <ESP32_IP_ADDRESS> with your ESP32's IP address
         .then(response => response.json())
         .then(data => {
           document.getElementById('moisture').innerText = data.soilMoisture;
