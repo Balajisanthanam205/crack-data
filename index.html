@@ -1,60 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32 Sensor Data</title>
+  <title>Sensor Data</title>
+  <!-- Load Firebase SDK from the CDN -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 </head>
 <body>
-    <h1>ESP32 Sensor Data</h1>
-    
-    <div id="dataContainer">
-        <p>Latitude: <span id="latitude">Loading...</span></p>
-        <p>Longitude: <span id="longitude">Loading...</span></p>
-        <p>Distance 1 (cm): <span id="distance1">Loading...</span></p>
-        <p>Distance 2 (cm): <span id="distance2">Loading...</span></p>
-        <p>Distance 3 (cm): <span id="distance3">Loading...</span></p>
-    </div>
-    
-    <script>
-        async function fetchData() {
-            try {
-                console.log('Fetching data...');
-                const response = await fetch('https://tranquil-c2029-default-rtdb.firebaseio.com/sensorData.json');
-                const data = await response.json();
-                
-                console.log('Fetched Data:', data); // Log data for debugging
-                
-                // Check if data is present
-                if (!data || Object.keys(data).length === 0) {
-                    console.error('No data found.');
-                    return;
-                }
-                
-                // Get the most recent data point
-                const latestTimestamp = Object.keys(data).pop();
-                const latestData = data[latestTimestamp];
-                
-                // Check if latestData is defined
-                if (!latestData) {
-                    console.error('No data for the latest timestamp.');
-                    return;
-                }
-                
-                console.log('Latest Data:', latestData); // Log the latest data
-                
-                // Update the HTML with the latest data
-                document.getElementById('latitude').textContent = latestData.latitude !== undefined ? latestData.latitude : 'No data';
-                document.getElementById('longitude').textContent = latestData.longitude !== undefined ? latestData.longitude : 'No data';
-                document.getElementById('distance1').textContent = latestData.distance1 !== undefined ? latestData.distance1 : 'No data';
-                document.getElementById('distance2').textContent = latestData.distance2 !== undefined ? latestData.distance2 : 'No data';
-                document.getElementById('distance3').textContent = latestData.distance3 !== undefined ? latestData.distance3 : 'No data';
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-        
-        fetchData();
-    </script>
+  <h1>Sensor Data</h1>
+  <p>Latitude: <span id="latitude">Loading...</span></p>
+  <p>Longitude: <span id="longitude">Loading...</span></p>
+  <p>Distance 1 (cm): <span id="distance1">Loading...</span></p>
+  <p>Distance 2 (cm): <span id="distance2">Loading...</span></p>
+  <p>Distance 3 (cm): <span id="distance3">Loading...</span></p>
+
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTrfNxYXXWbeJj1Tr9zBdadInTJ3bFx-o",
+      authDomain: "tranquil-c2029.firebaseapp.com",
+      databaseURL: "https://tranquil-c2029-default-rtdb.firebaseio.com",
+      projectId: "tranquil-c2029",
+      storageBucket: "tranquil-c2029.appspot.com",
+      messagingSenderId: "1028032875622",
+      appId: "1:1028032875622:web:09c445712b3619098f71a7",
+      measurementId: "G-D8FVT3WJ8H"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Reference to your Firebase database
+    const database = firebase.database();
+
+    function fetchData() {
+      database.ref('sensorData').on('value', (snapshot) => {
+        const data = snapshot.val();
+        updateValues(data);
+      });
+    }
+
+    function updateValues(data) {
+      // Update UI elements with fetched data
+      document.getElementById('latitude').textContent = data.latitude !== undefined ? data.latitude : 'No data';
+      document.getElementById('longitude').textContent = data.longitude !== undefined ? data.longitude : 'No data';
+      document.getElementById('distance1').textContent = data.distance1 !== undefined ? data.distance1 : 'No data';
+      document.getElementById('distance2').textContent = data.distance2 !== undefined ? data.distance2 : 'No data';
+      document.getElementById('distance3').textContent = data.distance3 !== undefined ? data.distance3 : 'No data';
+    }
+
+    fetchData();
+  </script>
 </body>
 </html>
