@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Sensor Data</title>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+  <title>Sensor and GPS Data</title>
+  <!-- Load Firebase SDK from the CDN -->
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 </head>
 <body>
   <h1>Sensor Data</h1>
   <p>Sensor 1 Distance: <span id="sensor1"></span> cm</p>
   <p>Sensor 2 Distance: <span id="sensor2"></span> cm</p>
   <p>Sensor 3 Distance: <span id="sensor3"></span> cm</p>
+
+  <h1>GPS Data</h1>
+  <p>Latitude: <span id="latitude"></span></p>
+  <p>Longitude: <span id="longitude"></span></p>
 
   <script>
     // Your web app's Firebase configuration
@@ -38,9 +43,16 @@
     }
 
     function updateValues(data) {
-      document.getElementById('sensor1').textContent = data.sensor1_distance || 'N/A';
-      document.getElementById('sensor2').textContent = data.sensor2_distance || 'N/A';
-      document.getElementById('sensor3').textContent = data.sensor3_distance || 'N/A';
+      if (data) {
+        // Update sensor data
+        document.getElementById('sensor1').textContent = data.sensorData.sensor1_distance || 'N/A';
+        document.getElementById('sensor2').textContent = data.sensorData.sensor2_distance || 'N/A';
+        document.getElementById('sensor3').textContent = data.sensorData.sensor3_distance || 'N/A';
+        
+        // Update GPS data
+        document.getElementById('latitude').textContent = data.gpsData.latitude || 'N/A';
+        document.getElementById('longitude').textContent = data.gpsData.longitude || 'N/A';
+      }
     }
 
     fetchData();
