@@ -23,6 +23,14 @@
                 const response = await fetch('https://tranquil-c2029-default-rtdb.firebaseio.com/sensorData.json');
                 const data = await response.json();
                 
+                console.log('Fetched Data:', data); // Log data for debugging
+                
+                // Check if data is present
+                if (Object.keys(data).length === 0) {
+                    console.error('No data found.');
+                    return;
+                }
+                
                 // Get the most recent data point
                 const latestTimestamp = Object.keys(data).pop();
                 const latestData = data[latestTimestamp];
