@@ -1,61 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Sensor and GPS Data</title>
-  <!-- Load Firebase SDK from the CDN -->
-  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Data</title>
 </head>
 <body>
-  <h1>Sensor Data</h1>
-  <p>Sensor 1 Distance: <span id="sensor1"></span> cm</p>
-  <p>Sensor 2 Distance: <span id="sensor2"></span> cm</p>
-  <p>Sensor 3 Distance: <span id="sensor3"></span> cm</p>
+    <h1>ESP32 Sensor and GPS Data</h1>
+    <div id="data">
+        <!-- Data will be displayed here -->
+    </div>
 
-  <h1>GPS Data</h1>
-  <p>Latitude: <span id="latitude"></span></p>
-  <p>Longitude: <span id="longitude"></span></p>
+    <script>
+        async function fetchData() {
+            const firebaseURL = "https://tranquil-c2029-default-rtdb.firebaseio.com/";
+            const sensorDataEndpoint = ${firebaseURL}sensorData.json;
+            const gpsDataEndpoint = ${firebaseURL}gpsData.json;
 
-  <script>
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBTrfNxYXXWbeJj1Tr9zBdadInTJ3bFx-o",
-      authDomain: "tranquil-c2029.firebaseapp.com",
-      databaseURL: "https://tranquil-c2029-default-rtdb.firebaseio.com",
-      projectId: "tranquil-c2029",
-      storageBucket: "tranquil-c2029.appspot.com",
-      messagingSenderId: "1028032875622",
-      appId: "1:1028032875622:web:09c445712b3619098f71a7",
-      measurementId: "G-D8FVT3WJ8H"
-    };
+            try {
+                const [sensorResponse, gpsResponse] = await Promise.all([
+                    fetch(sensorDataEndpoint),
+                    fetch(gpsDataEndpoint)
+                ]);
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+                const sensorData = await sensorResponse.json();
+                const gpsData = await gpsResponse.json();
 
-    // Reference to your Firebase database
-    const database = firebase.database();
+                document.getElementById('data').innerHTML = `
+                    <h2>Sensor Data</h2>
+                    <p>Distance1: ${sensorData.distance1 || 'N/A'}</p>
+                    <p>Distance2: ${sensorData.distance2 || 'N/A'}</p>
+                    <p>Distance3: ${sensorData.distance3 || 'N/A'}</p>
+                    
+                    <h2>GPS Data</h2>
+                    <p>Latitude: ${gpsData.latitude || 'N/A'}</p>
+                    <p>Longitude: ${gpsData.longitude || 'N/A'}</p>
+                `;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
 
-    function fetchData() {
-      database.ref('sensorData').on('value', (snapshot) => {
-        const data = snapshot.val();
-        updateValues(data);
-      });
-    }
-
-    function updateValues(data) {
-      if (data) {
-        // Update sensor data
-        document.getElementById('sensor1').textContent = data.sensorData.sensor1_distance || 'N/A';
-        document.getElementById('sensor2').textContent = data.sensorData.sensor2_distance || 'N/A';
-        document.getElementById('sensor3').textContent = data.sensorData.sensor3_distance || 'N/A';
-        
-        // Update GPS data
-        document.getElementById('latitude').textContent = data.gpsData.latitude || 'N/A';
-        document.getElementById('longitude').textContent = data.gpsData.longitude || 'N/A';
-      }
-    }
-
-    fetchData();
-  </script>
+        fetchData();
+    </script>
 </body>
 </html>
